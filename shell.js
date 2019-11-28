@@ -23,12 +23,13 @@ exec(command, function(err, stdout, stderr) {if (err){console.log(stderr);res.se
 });
 
 app.get('/hi', (req, res) => {
-
+var ip = req.connection.remoteAddress;
 let  command = req.query.hello;
-let answer="I am lesting you";
+let answer="I am listening you";
 res.send(answer);
-
+console.log(ip);
 });
+
 
 
 app.listen(port, () => {

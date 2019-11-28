@@ -15,7 +15,7 @@ console.log(myaddr);
 
 
 const options = {
-    url: 'http://54.197.66.192:4000/hi/?hello',
+    url: 'http://localhost:4000/hi/?hello',
     method: 'GET',
    
 };
@@ -44,8 +44,11 @@ request(ipinfo, function(err, res, body) {
 
     if (err){ console.log(err)}
 	else {
-		console.log(body)
+		//console.log(body)
 		console.log(res.statusCode);
+		ipinfo_res=JSON.parse(body)
+		console.log(ipinfo_res)
+		console.log(ipinfo_res.ip);
 	}
 		
 
