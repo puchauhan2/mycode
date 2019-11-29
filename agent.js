@@ -8,28 +8,28 @@ var myip = ip.address()
 //console.log(myip);
 
 const host_name =  os.hostname();
-
 const myaddr = myip + "@" + host_name;
 
-console.log(myaddr);
 
 
-const options = {
-    url: 'http://localhost:4000/hi/?hello',
-    method: 'GET',
+// const hi = {
+//     url: 'http://localhost:4000/hi/?hello',
+//     method: 'GET',
    
-};
+// };
 
-request(options, function(err, res, body) {
+// request(hi, function(err, res, body) {
 
-    if (err){ console.log(err)}
-	else {
-		console.log(body)
-		console.log(res.statusCode)
-	;}
+//     if (err){ 
+//         console.log(err)
+            
+// 	}else {
+// 		console.log(body)
+// 		console.log(res.statusCode)
+// 	;}
 		
 
-});
+// });
 
 
 
@@ -39,18 +39,35 @@ const ipinfo = {
    
 };
 
+	request(ipinfo, function(err, res, body) {
 
-request(ipinfo, function(err, res, body) {
+		if (err){ console.log(err)}
+		else {
+			//console.log(body)
+			console.log(res.statusCode);
+			ipinfo_res=JSON.parse(body)
+			console.log(ipinfo_res)
+			console.log(ipinfo_res.ip);
+	
+			const options = {
+				url: 'http://localhost:4000/agentdetails',
+                method: 'POST',
+                headers :{
+                    accept: '*/*',
+                    'content-type' : 'application/json'
+                },
+                body: ipinfo_res, 
+                json :true
+                
+			   
+			};
+	
+			request(options,function(err,res,body){
+                console.log("Error:" + err)
+                console.log("Response:"  +res)
+                console.log("Body:"  +body)
+            })
+	
+		}
+	});
 
-    if (err){ console.log(err)}
-	else {
-		//console.log(body)
-		console.log(res.statusCode);
-		ipinfo_res=JSON.parse(body)
-		console.log(ipinfo_res)
-		console.log(ipinfo_res.ip);
-	}
-		
-
-
-});
