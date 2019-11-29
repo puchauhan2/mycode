@@ -43,9 +43,8 @@ const ipinfo = {
 
 		if (err){ console.log(err)}
 		else {
-			//console.log(body)
-			console.log(res.statusCode);
-			ipinfo_res=JSON.parse(body)
+			ipinfo_res = JSON.parse(body)
+			ipinfo_res['agent_name']=myaddr;
 			console.log(ipinfo_res)
 			console.log(ipinfo_res.ip);
 	
