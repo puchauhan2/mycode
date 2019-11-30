@@ -53,8 +53,9 @@ app.post('/agentdetails', (req, res) => {
     var upsert = { "upsert" : true }
 
     db1.collection('agent_details').updateOne(myquery, newvalues,upsert, function(err, result) {
-         if (err) throw err;
-       console.log("Collection is created! into  "+db1.databaseName+" database");
+         if (err) { console.log(" Error while writing into databases "); }
+         else {console.log("DB Updated ")}
+       
        db.close();
   
        });
