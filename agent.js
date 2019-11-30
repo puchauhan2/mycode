@@ -12,26 +12,6 @@ const myaddr = myip + "@" + host_name;
 
 
 
-// const hi = {
-//     url: 'http://localhost:4000/hi/?hello',
-//     method: 'GET',
-   
-// };
-
-// request(hi, function(err, res, body) {
-
-//     if (err){ 
-//         console.log(err)
-            
-// 	}else {
-// 		console.log(body)
-// 		console.log(res.statusCode)
-// 	;}
-		
-
-// });
-
-
 
 const ipinfo = {
     url: 'http://ipinfo.io',
