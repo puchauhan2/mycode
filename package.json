@@ -15,6 +15,7 @@
     "externalip": "^1.0.2",
     "ip": "^1.1.5",
     "mongoose": "^5.7.13",
+    "node-cron": "^2.0.3",
     "request": "^2.88.0"
   }
 }
