@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 var exec = require('child_process').exec;
+var cron = require('node-cron');
 var MongoClient = require('mongodb').MongoClient
 var url = 'mongodb://admin:india@192.168.208.140:27017/admin';
 
@@ -58,12 +59,55 @@ app.post('/agentdetails', (req, res) => {
        
        db.close();
   
-       });
-      });
-  
-
+         });
+    });
 });
 
+  cron.schedule('*/2 * * * *', () => {
+  
+    MongoClient.connect(url ,function(err, db) {
+      console.log("Connected correctly to server");
+      var db1 = db.db("agents");
+      console.log("Switched to "+db1.databaseName+" database");
+      
+      var myquery = { "agentActive" : 1 };
+      var newvalues = {$set: { "agentActive" : 0 } };
+
+      db1.collection('agent_details').updateMany(myquery,newvalues, function(err,data){
+        if(err){ 
+          console.log("Error while disabling agent stattus")
+        }else{
+          console.log("Agent disabled")
+        }
+        db.close();
+      });
+    });
+
+}); 
+
+
+app.get('/getcommand', (req, res) => {
+
+  MongoClient.connect(url ,function(err, db) {
+    console.log("Connected correctly to server");
+    var db1 = db.db("agents");
+    console.log("Switched to "+db1.databaseName+" database");
+    
+    db1.collection('agent_details').find({"agentActive":1},{projection:{"agent_name":1,"_id":0}}).toArray(function(err,data){
+      if(err){ 
+        console.log(err)
+        return res.send(err) 
+      }else{
+        console.log(data)
+        return res.send(data)
+      }
+      db.close();
+    })
+    });
+
+
+
+  });
 
 app.listen(port, () => {
   console.log('Server started on port '+port);
