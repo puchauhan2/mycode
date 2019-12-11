@@ -5,7 +5,7 @@ let exec = require('child_process').exec;
 let cron = require('node-cron');
 let MongoClient = require('mongodb').MongoClient
 const url = 'mongodb://admin:india@192.168.208.140:27017/admin';
-var commandexec = 'ls';
+var commandexec = 'cd c:/\ && dir';
 
 const app = express();
 const port = 4000;
@@ -49,8 +49,8 @@ app.post('/agentdetails', (req, res) => {
     if (err){console.log("Unable to connect to server");}
     else {
     let db1 = db.db("agents");
-    console.log("Switched to "+db1.databaseName+" database");
-    
+    console.log("Switched to "+db1.databaseName+" database to insert in DB");
+    console.log("Inserting data into mongo")
     let myquery = { "agent_name" : agent_data.agent_name };
     let newvalues = { $set: agent_data };
     let upsert = { "upsert" : true }
@@ -104,15 +104,13 @@ app.get('/getcommand', (req, res) => {
         console.log(data)
         if(data && data.length > 0 ){
           data.forEach(i=>{
-            i.command= commandexec
+            i.command = commandexec
           })
-          let agent_active= data
-          console.log(agent_active)
-          return res.send(agent_active)
         }
-        
+        db.close();
+        return res.send(data)
       }
-      db.close();
+      
     })
     });
 

